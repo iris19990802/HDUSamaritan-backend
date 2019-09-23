@@ -1,0 +1,10 @@
+.DS_Store
+db.sqlite3
+*.log
+*.pot
+*.pyc
+.idea
+.vagrant
+local_settings.py
+.venv
+/.vscode
