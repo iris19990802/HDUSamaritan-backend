@@ -4,6 +4,8 @@ from django.contrib.auth import login as django_login, logout as django_logout, 
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import list_route
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .serializer import UserSerializer
 from course.serializer import CourseSerializer
@@ -14,7 +16,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
+    @csrf_exempt
     @list_route(methods=['POST'])
     def login(self,request):
         
@@ -57,12 +59,13 @@ class UserViewSet(viewsets.ModelViewSet):
         print(this_user)
         print()
 
-        result_set = this_user.stu_course_st.all()
+        #result_set = this_user.stu_course_st.all()
+        result_set = this_user.registration_set.all() # 记得要小写Orz
         print(result_set)
         print()
 
         for e in result_set:
-            print(e.c_id)
+            print(e.course.c_id)
 
         return Response(CourseSerializer(result_set,many=True).data)
         #从前端获取数据(cookie里拿来)
