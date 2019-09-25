@@ -4,13 +4,13 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
-    role = models.IntegerField(default=2)
-    nickname = models.CharField(max_length=20)
+    u_role = models.IntegerField(default=2)
+    u_nickname = models.CharField(max_length=20)
     def get_file_path(self,filename):
         ext = filename.split('.')[-1]
         return 'static/photo/%s.%s' % (self.username,ext)
 
-    image = models.ImageField(upload_to=get_file_path,null=True)
+    u_image = models.ImageField(upload_to=get_file_path,null=True)
 
     def return_role(self):
         role_name = ""

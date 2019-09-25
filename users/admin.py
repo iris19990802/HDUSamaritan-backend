@@ -7,12 +7,14 @@ from .models import User
 
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('id', 'username', 'nickname','role', )
-    search_fields = ('username', 'role')
+    list_display = ('id', 'username', 'u_nickname','u_role', 'u_image')
+    #list_display = ( 'username', 'u_nickname','u_role', 'u_image')
+    search_fields = ('username', 'u_role')
     ordering = ('-id', )
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'role')}),
-        ('Personal info', {'fields': ('nickname','image')}),
+        #(None, {'fields': ('id','username', 'password', 'u_role')}),
+        (None, {'fields': ('username', 'password', 'u_role')}),
+        ('Personal info', {'fields': ('u_nickname','u_image')}),
         ('Permissions', {'fields': ('is_staff', 'is_superuser' )}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -20,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'nickname', 'role', 'password1', 'password2')}
+            'fields': ('username', 'u_nickname', 'u_role', 'password1', 'password2')}
         ),
     )
 
