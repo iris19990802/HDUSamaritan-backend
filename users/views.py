@@ -8,9 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .serializer import UserSerializer
-from course.serializer import CourseSerializer
+from course.serializer import CourseSerializer,RegistrationSerializer
 from .service import UserService
 from users.models import User
+from course.models import Course,Registration
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -23,10 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
         #从前端获取数据
         req_username = request.data['req_username']
         req_password = request.data['req_password']
-        print("req_username:")
-        print(req_username)
-        print("req_password:")
-        print(req_password)
+
         #从库里查询数据并校验
         if not UserService.check_user_exists(req_username):
             return Response({'detail':'账号不存在','field':'username'},status = status.HTTP_401_UNAUTHORIZED)
@@ -47,28 +45,56 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             request.session.set_expiry(0)
 
-        #return Response(UserSerializer(request.user).data)
         return Response(UserSerializer(request.user).data)
 
 
     @list_route(methods=['GET'])
     def find_course_by_user(self,request):
 
-        this_user = User.objects.get(username=request.user.username)
-        print()
-        print(this_user)
-        print()
+        this_user = User.objects.get(username=request.user.username)  #从前端获取数据(cookie里拿来)
 
-        #result_set = this_user.stu_course_st.all()
-        result_set = this_user.registration_set.all() # 记得要小写Orz
-        print(result_set)
-        print()
+        if this_user.u_role == 2: # 如果当前用户是学生
+            result_set = this_user.registration_set.all()  # registration_set 记得要小写Orz
+            return Response(RegistrationSerializer(result_set,many=True).data)
 
-        for e in result_set:
-            print(e.course.c_id)
+        elif this_user.u_role == 1: # 如果当前用户是老师
+            result_set = this_user.tea_course_st.all()
+            return Response(CourseSerializer(result_set,many=True).data)
+            # print(result_set)
+            # print()
+            # for e in result_set:
+            #     print(e.c_id)
 
-        return Response(CourseSerializer(result_set,many=True).data)
-        #从前端获取数据(cookie里拿来)
-        
+            
+
+
+    @list_route(methods=['GET'])
+    def course_info_student(self,request):
+
+        this_user = request.user  # 从前端获取数据(cookie里拿来)
+        print(this_user.username)
+        req_course_id = request.GET['course_id']
+
+        this_course = Course.objects.get(c_id=req_course_id)
+
+        result = this_user.registration_set.get(user=this_user,course=this_course)
+
+        return Response(RegistrationSerializer(result).data)
+    
+
+    @list_route(methods=['GET'])
+    def course_info_teacher(self,request):
+
+        this_user = request.user
+
+        if this_user.u_role == 1: # 如果当前用户是老师
+            req_course_id = request.GET['course_id']
+            this_course = Course.objects.get(c_id=req_course_id)
+            print(this_course)
+            # 查找属于当前课程的所有学生，在这门课的信息
+            result_set = Registration.objects.filter(course=this_course) 
+
+            return Response(RegistrationSerializer(result_set,many=True).data)
+      
 
     
