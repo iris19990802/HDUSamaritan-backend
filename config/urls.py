@@ -20,10 +20,12 @@ from django.conf.urls import url, include
 
 from users.views import UserViewSet
 from course.views import CourseViewSet
+from attendance.views import attendanceViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users',UserViewSet)
 router.register(r'course',CourseViewSet)
+router.register(r'attendance',attendanceViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

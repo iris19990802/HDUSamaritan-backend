@@ -95,6 +95,4 @@ class UserViewSet(viewsets.ModelViewSet):
             result_set = Registration.objects.filter(course=this_course) 
 
             return Response(RegistrationSerializer(result_set,many=True).data)
-      
-
-    
+            

@@ -8,7 +8,7 @@ class User(AbstractUser):
     u_nickname = models.CharField(max_length=20)
     def get_file_path(self,filename):
         ext = filename.split('.')[-1]
-        return 'static/photo/%s.%s' % (self.username,ext)
+        return 'static/identities/%s.%s' % (self.username,ext)
 
     u_image = models.ImageField(upload_to=get_file_path,null=True)
 
