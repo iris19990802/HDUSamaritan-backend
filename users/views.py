@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.decorators import list_route
 from django.views.decorators.csrf import csrf_exempt
-
+import os
 
 from .serializer import UserSerializer
 from course.serializer import CourseSerializer,RegistrationSerializer
@@ -95,4 +95,51 @@ class UserViewSet(viewsets.ModelViewSet):
             result_set = Registration.objects.filter(course=this_course) 
 
             return Response(RegistrationSerializer(result_set,many=True).data)
-            
+
+
+    # 学生上传图片
+    @list_route(methods=['POST'])
+    def upload_user_photo(self,request):
+
+        # 获取请求的用户
+        this_user = request.user
+        
+        # 获取此次更新照片的方向（0/1/2:正面/左侧面/右侧面）
+        this_pos = request.data['pos']
+
+        # 获取并存储图片
+        this_image = request.FILES['file'] # 获取UploadedFile 对象
+
+
+#         # 删除已存在文件
+#         if(os.path.exists(dirPath+"foo.txt")):
+# 　　        os.remove(dirPath+"foo.txt")
+
+        user_object = User.objects.get(username=this_user.username) # 按指定文件名存储图片
+        
+        if this_pos == "0":
+            old_file_path = user_object.u_image_0 # ImageFieldFile
+            if old_file_path.name != "":
+                if os.path.exists(old_file_path.path):
+                    os.remove(old_file_path.path)
+            user_object.u_image_0 = this_image
+
+        elif this_pos == "1":
+            old_file_path = user_object.u_image_1 # ImageFieldFile
+            if old_file_path.name != "":
+                if os.path.exists(old_file_path.path):
+                    os.remove(old_file_path.path)
+            user_object.u_image_1 = this_image
+
+        elif this_pos == "2":
+            old_file_path = user_object.u_image_2 # ImageFieldFile
+            if old_file_path.name != "":
+                if os.path.exists(old_file_path.path):
+                    os.remove(old_file_path.path)
+            user_object.u_image_2 = this_image
+
+        user_object.save()
+
+
+
+        return Response(UserSerializer(user_object).data)

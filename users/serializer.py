@@ -10,5 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'u_nickname',
             'u_role',
-            'u_image'
+            'u_image_0',
+            'u_image_1',
+            'u_image_2'
         )

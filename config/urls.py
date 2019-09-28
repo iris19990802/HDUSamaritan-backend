@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import url, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 from users.views import UserViewSet
 from course.views import CourseViewSet
@@ -30,4 +32,4 @@ router.register(r'attendance',attendanceViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/',include(router.urls))
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -6,11 +6,22 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     u_role = models.IntegerField(default=2)
     u_nickname = models.CharField(max_length=20)
-    def get_file_path(self,filename):
-        ext = filename.split('.')[-1]
-        return 'static/identities/%s.%s' % (self.username,ext)
 
-    u_image = models.ImageField(upload_to=get_file_path,null=True)
+    def get_file_path(self,filename):
+         ext = filename.split('.')[-1]
+         return 'static/identities/%s_0.%s' % (self.username,ext)
+
+    def get_file_path_1(self,filename):
+         ext = filename.split('.')[-1]
+         return 'static/identities/%s_1.%s' % (self.username,ext)
+
+    def get_file_path_2(self,filename):
+         ext = filename.split('.')[-1]
+         return 'static/identities/%s_2.%s' % (self.username,ext)
+
+    u_image_0 = models.ImageField(upload_to=get_file_path,null=True) # 正面照
+    u_image_1 = models.ImageField(upload_to=get_file_path_1,null=True) # 左侧面照
+    u_image_2 = models.ImageField(upload_to=get_file_path_2,null=True) # 右侧面照
 
     def return_role(self):
         role_name = ""
