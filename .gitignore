@@ -9,3 +9,5 @@ local_settings.py
 .venv
 /.vscode
 static
+*.key
+*.pem
