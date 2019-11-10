@@ -31,7 +31,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
         this_user = request.user
         print(this_user)
         if(this_user.u_role != "1" and this_user.tea_course_st.filter(c_teacher=this_user).exists() == True):
-            print("是教师,确实教这门课")
+            #print("是教师,确实教这门课")
         else:
             return Response("Error") # 越权访问，返回error
 
@@ -55,7 +55,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
         #post_params = json.dumps(params) # 不用转成字符串
 
         # 调用算法部分api  
-        response = requests.post('http://localhost:6000/uploader',json=params) # 指定post请求头：application/json
+        response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
         # response = requests.post('http://192.168.249.151:6000/uploader',data=post_params)
         # response = requests.post('http://192.168.249.151:6000/uploader',headers={'Content-Type': 'application/json'},data=params)
         

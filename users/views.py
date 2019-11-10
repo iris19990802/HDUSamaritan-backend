@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 
 from .serializer import UserSerializer
-from course.serializer import CourseSerializer,RegistrationSerializer
+from course.serializer import CourseSerializer,RegistrationSerializerByUser,RegistrationSerializer1,RegistrationSerializer
 from .service import UserService
 from users.models import User
 from course.models import Course,Registration
@@ -49,22 +49,50 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
     @list_route(methods=['GET'])
-    def find_course_by_user(self,request):
+    def logout(self,request):
+        django_logout(request)
+        return Response(status=status.HTTP_200_OK)
+    
 
-        this_user = User.objects.get(username=request.user.username)  #从前端获取数据(cookie里拿来)
+    @list_route(methods=['POST'])
+    def add_user(self,request):
+        req_username = request.data['username']
+        req_nickname = request.data['nickname']
+        req_role = request.data['role']
+        req_password = request.data['password']
 
-        if this_user.u_role == 2: # 如果当前用户是学生
-            result_set = this_user.registration_set.all()  # registration_set 记得要小写Orz
-            return Response(RegistrationSerializer(result_set,many=True).data)
+        # 创建用户
+        user = User.objects.create_user(username=req_username,password=req_password,u_role=req_role,u_nickname=req_nickname)
 
-        elif this_user.u_role == 1: # 如果当前用户是老师
-            result_set = this_user.tea_course_st.all()
-            return Response(CourseSerializer(result_set,many=True).data)
-            # print(result_set)
-            # print()
-            # for e in result_set:
-            #     print(e.c_id)
+        # 顺便帮用户登陆
+        django_login(request,user)  # 后台登陆
 
+        return Response(UserSerializer(user).data)
+
+    @list_route(methods=['GET'])
+    def user_info(self,request):
+        this_user = request.user
+        if request.user.is_anonymous:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+       
+        if request.user.u_role == 2: # 如果当前用户是学生
+            #result_set = request.user.registration_set.all()  # registration_set 记得要小写Orz
+            result_set = request.user.registration_set.filter(user=this_user,is_quit=False)
+            for e in result_set:
+                print(e.course)
+            return Response({
+                'user_info':UserSerializer(request.user).data,
+                'course_info':RegistrationSerializerByUser(result_set,many=True).data
+                })
+
+        elif request.user.u_role == 1: # 如果当前用户是老师
+            result_set = request.user.tea_course_st.all()
+            #result_set = request.user.tea_course_st.filter(c_teacher=this_user,is_deleted=False)
+            return Response({
+                'user_info':UserSerializer(request.user).data,
+                'course_info':CourseSerializer(result_set,many=True).data
+            })
             
 
 
@@ -77,7 +105,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         this_course = Course.objects.get(c_id=req_course_id)
 
-        result = this_user.registration_set.get(user=this_user,course=this_course)
+        result = this_user.registration_set.get(user=this_user,course=this_course,is_quit=False)
 
         return Response(RegistrationSerializer(result).data)
     
@@ -86,16 +114,27 @@ class UserViewSet(viewsets.ModelViewSet):
     def course_info_teacher(self,request):
 
         this_user = request.user
-
+        
         if this_user.u_role == 1: # 如果当前用户是老师
             req_course_id = request.GET['course_id']
             this_course = Course.objects.get(c_id=req_course_id)
             print(this_course)
             # 查找属于当前课程的所有学生，在这门课的信息
-            result_set = Registration.objects.filter(course=this_course) 
 
-            return Response(RegistrationSerializer(result_set,many=True).data)
+            return Response(RegistrationSerializer1(this_course).data)
 
+    @list_route(methods=['GET'])
+    def quit_course_student(self,request):
+        course_id = request.GET['course_id']
+        this_course = Course.objects.get(c_id=course_id)
+        this_user = request.user
+
+        # 逻辑删除
+        this_regis = Registration.objects.get(user=this_user,course=this_course)
+        this_regis.is_quit = True
+        this_regis.save()
+
+        return Response("Success")
 
     # 学生上传图片
     @list_route(methods=['POST'])
@@ -109,7 +148,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         # 获取并存储图片
         this_image = request.FILES['file'] # 获取UploadedFile 对象
-
 
 #         # 删除已存在文件
 #         if(os.path.exists(dirPath+"foo.txt")):

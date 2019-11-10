@@ -12,8 +12,8 @@ class CourseAdmin(admin.ModelAdmin):
     ordering = ('-c_id', )
 
 class Registration_Admin(admin.ModelAdmin):
-    list_display = ('id','course','user', 'cnt_abcense' )
-    search_fields = ('course','user', 'cnt_abcense')
+    list_display = ('id','course','user', 'cnt_abcense','is_quit' )
+    search_fields = ('course','user', 'cnt_abcense','is_quit')
 
 
 admin.site.register(Course, CourseAdmin)
