@@ -31,6 +31,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
         this_user = request.user
         print(this_user)
         if(this_user.u_role != "1" and this_user.tea_course_st.filter(c_teacher=this_user).exists() == True):
+            pass
             #print("是教师,确实教这门课")
         else:
             return Response("Error") # 越权访问，返回error
