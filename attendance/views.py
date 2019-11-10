@@ -56,7 +56,8 @@ class attendanceViewSet(viewsets.ModelViewSet):
         #post_params = json.dumps(params) # 不用转成字符串
 
         # 调用算法部分api  
-        response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
+        #response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
+        response = requests.post('http://172.17.0.1:6000/uploader',json=params)
         # response = requests.post('http://192.168.249.151:6000/uploader',data=post_params)
         # response = requests.post('http://192.168.249.151:6000/uploader',headers={'Content-Type': 'application/json'},data=params)
         
