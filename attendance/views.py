@@ -46,21 +46,23 @@ class attendanceViewSet(viewsets.ModelViewSet):
             for chunk in this_image.chunks():
                 destination.write(chunk)
 
-        # 处理算法部分所需参数：此班级内所有学生的：学号-名字  （生成字典格式）
-        params = {}
+        # 处理算法部分所需参数：此班级内所有学生的：学号 （列表）
+        params = []
         class_student_set = Registration.objects.filter(course=this_course) 
         for e in class_student_set:
-            params[e.user.username] = e.user.u_nickname
+            params.append(e.user.username)
 
         print(params)
         #post_params = json.dumps(params) # 不用转成字符串
 
-        # 调用算法部分api  
+        # 调用算法部分api (sign)
         #response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
-        response = requests.post('http://172.17.0.1:6000/uploader',json=params)
-        # response = requests.post('http://192.168.249.151:6000/uploader',data=post_params)
-        # response = requests.post('http://192.168.249.151:6000/uploader',headers={'Content-Type': 'application/json'},data=params)
+        #response = requests.post('http://172.17.0.1:6000/uploader',json=params)
+
+        response = requests.post('http://x.b1n.top:12350/query/',json=params)
+
         
+        # --------------  返回值还要调过  ---------------------
         # 接到返回值：“缺课学生学号”的列表
         student_abcense_lst = json.loads(response.text)
 

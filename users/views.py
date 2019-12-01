@@ -13,6 +13,8 @@ from .service import UserService
 from users.models import User
 from course.models import Course,Registration
 
+from users.utils import load_image_file,exif_transpose
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -136,7 +138,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response("Success")
 
-    # 学生上传图片
+    # 学生上传图片 （一次上传一张）
     @list_route(methods=['POST'])
     def upload_user_photo(self,request):
 
@@ -149,9 +151,10 @@ class UserViewSet(viewsets.ModelViewSet):
         # 获取并存储图片
         this_image = request.FILES['file'] # 获取UploadedFile 对象
 
-#         # 删除已存在文件
-#         if(os.path.exists(dirPath+"foo.txt")):
-# 　　        os.remove(dirPath+"foo.txt")
+        # 转换图片方向
+        converted_image = load_image_file(request.FILES['file'].file)
+
+        this_image.file = converted_image
 
         user_object = User.objects.get(username=this_user.username) # 按指定文件名存储图片
         
@@ -178,6 +181,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
         user_object.save()
 
-
-
-        return Response(UserSerializer(user_object).data)
+        # 如果此学生三张照片已齐，则通知算法端处理三张照片
+        params = {}
+        params['sid'] = this_user.username
+        if(user_object.u_image_0 != None and user_object.u_image_1 != None and user_object.u_image_2 != None):
+            response = requests.post('http://x.b1n.top:12350/key/',json=params)
+        
+        status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
+        
+        return Response(status)
+        #return Response(UserSerializer(user_object).data)
