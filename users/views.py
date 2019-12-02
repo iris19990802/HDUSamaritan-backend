@@ -193,7 +193,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if(user_object.u_image_0 != None and user_object.u_image_1 != None and user_object.u_image_2 != None):
             #response = requests.post('http://x.b1n.top:12350/key/',json=params)
             requested = 1
-            response = requests.get('http://0.0.0.0:5002/key/',json=params,timeout=None)  # 设置超时时间：永远等待（不要反复请求）
+            response = requests.get('http://0.0.0.0:5002/key/',json=params,timeout=60)  # 设置超时时间：永远等待（不要反复请求）
             #status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
             # 打出调试信息
             status_code = response.status_code
