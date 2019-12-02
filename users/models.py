@@ -9,14 +9,20 @@ class User(AbstractUser):
 
     def get_file_path(self,filename):
          ext = filename.split('.')[-1]
+         if ext == "jpeg":
+             ext = "jpg"
          return 'static/identities/%s_0.%s' % (self.username,ext)
 
     def get_file_path_1(self,filename):
          ext = filename.split('.')[-1]
+         if ext == "jpeg":
+             ext = "jpg"
          return 'static/identities/%s_1.%s' % (self.username,ext)
 
     def get_file_path_2(self,filename):
          ext = filename.split('.')[-1]
+         if ext == "jpeg":
+             ext = "jpg"
          return 'static/identities/%s_2.%s' % (self.username,ext)
 
     u_image_0 = models.ImageField(upload_to=get_file_path,null=True) # 正面照
