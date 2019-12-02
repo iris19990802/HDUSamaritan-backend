@@ -39,6 +39,8 @@ class attendanceViewSet(viewsets.ModelViewSet):
         this_image = request.FILES['file'] # UploadedFile 对象
         filename = this_image.name # 上传的照片的文件名
         enddress = filename.split('.')[-1] #文件名后缀
+        if enddress == "jpeg":
+            enddress = "jpg"
         file_path = 'static/input.%s'% (enddress) # 生成完整文件路径
 
         with open(file_path, 'wb+') as destination: # 存到/static/input.后缀 文件下
