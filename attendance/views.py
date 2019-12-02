@@ -29,7 +29,6 @@ class attendanceViewSet(viewsets.ModelViewSet):
 
         # 获取请求的用户
         this_user = request.user
-        print(this_user)
         if(this_user.u_role != "1" and this_user.tea_course_st.filter(c_teacher=this_user).exists() == True):
             pass
             #print("是教师,确实教这门课")
@@ -59,12 +58,23 @@ class attendanceViewSet(viewsets.ModelViewSet):
         #response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
         #response = requests.post('http://172.17.0.1:6000/uploader',json=params)
 
-        response = requests.post('http://x.b1n.top:12350/query/',json=params)
+        #response = requests.post('http://x.b1n.top:12350/query/',json=params)
 
-        
+        response = requests.post('http://0.0.0.0:5002/query/',json=params)
+
+        print("-------------- 请求算法端签到（query）-----------------")
+        print("status_code")
+        print(response.status_code)
+        print("json")
+        print(response.text)
+
         # --------------  返回值还要调过  ---------------------
+
+        result_type = response.text['result']
+       
         # 接到返回值：“缺课学生学号”的列表
-        student_abcense_lst = json.loads(response.text)
+        student_abcense_lst = response.text['miss']
+        #student_abcense_lst = json.loads(response.text)
 
         # 处理出：全班学生的到课情况json，
         # 格式：{

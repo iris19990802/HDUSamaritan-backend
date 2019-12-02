@@ -15,6 +15,8 @@ from course.models import Course,Registration
 
 from users.utils import load_image_file,exif_transpose
 
+import requests
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -181,13 +183,31 @@ class UserViewSet(viewsets.ModelViewSet):
 
         user_object.save()
 
-        # 如果此学生三张照片已齐，则通知算法端处理三张照片
+        # 只有此学生三张照片已齐，才通知算法端处理三张照片
         params = {}
         params['sid'] = this_user.username
+
+        # 初始化
+        status = 0
+        requested = 0
         if(user_object.u_image_0 != None and user_object.u_image_1 != None and user_object.u_image_2 != None):
-            response = requests.post('http://x.b1n.top:12350/key/',json=params)
+            #response = requests.post('http://x.b1n.top:12350/key/',json=params)
+            requested = 1
+            response = requests.get('http://0.0.0.0:5002/key/',json=params)
+            status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
+            # 打出调试信息
+            status_code = response.status_code
+            json_content = response.text
+            print("-------------- 请求算法端处理图片 --------------")
+            print("status_code: ")
+            print(status_code)
+            print("json_content: ")
+            print(json_content)
+            
         
-        status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
-        
-        return Response(status)
+        return Response(
+            {
+                'requested':requested, #是否请求过算法端
+                'status':status #算法端返回值
+            })
         #return Response(UserSerializer(user_object).data)
