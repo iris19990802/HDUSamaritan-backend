@@ -193,8 +193,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if(user_object.u_image_0 != None and user_object.u_image_1 != None and user_object.u_image_2 != None):
             #response = requests.post('http://x.b1n.top:12350/key/',json=params)
             requested = 1
-            response = requests.get('http://0.0.0.0:5002/key/',json=params)
-            status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
+            response = requests.get('http://0.0.0.0:5002/key/',json=params,timeout=None)  # 设置超时时间：永远等待（不要反复请求）
+            #status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
             # 打出调试信息
             status_code = response.status_code
             json_content = response.text
@@ -208,6 +208,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             {
                 'requested':requested, #是否请求过算法端
-                'status':status #算法端返回值
+                #'status':status #算法端返回值
             })
         #return Response(UserSerializer(user_object).data)

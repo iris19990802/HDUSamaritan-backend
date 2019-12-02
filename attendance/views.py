@@ -62,7 +62,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
 
         #response = requests.post('http://x.b1n.top:12350/query/',json=params)
 
-        response = requests.post('http://0.0.0.0:5002/query/',json=params)
+        response = requests.post('http://0.0.0.0:5002/query/',json=params,timeout=None) # 永远等待（避免反复请求）
 
         print("-------------- 请求算法端签到（query）-----------------")
         print("status_code")
