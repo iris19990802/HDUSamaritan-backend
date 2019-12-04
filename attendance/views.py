@@ -73,7 +73,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
         print(response.text)
 
         # --------------  返回值还要调过  ---------------------
-        
+
         result_type = response.json()['result']
        
         # 接到返回值：“缺课学生学号”的列表
@@ -130,7 +130,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
         return Response({
             "quantity":this_quantity,
             "student_sign_list":student_sign_list,
-            "output_photo_src":'static/output/output.jpg'
+            "output_photo_src":'static/output/out.jpg'
             #"output_photo_src":'static/output/'+output_photo_name   # 注意这里output的路径
         })
 
