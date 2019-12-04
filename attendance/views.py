@@ -36,14 +36,16 @@ class attendanceViewSet(viewsets.ModelViewSet):
             return Response("Error") # 越权访问，返回error
 
         # 获取并存储图片
-        this_image = request.FILES['file'] # UploadedFile 对象
-        filename = this_image.name # 上传的照片的文件名
-        enddress = filename.split('.')[-1] #文件名后缀
-        if enddress == "jpeg":
-            enddress = "jpg"
-        file_path = 'static/input.%s'% (enddress) # 生成完整文件路径
+        # this_image = request.FILES['file'] # UploadedFile 对象
+        # filename = this_image.name # 上传的照片的文件名
+        # enddress = filename.split('.')[-1] #文件名后缀
+        # if enddress == "jpeg":
+        #     enddress = "jpg"
+        # file_path = 'static/input.%s'% (enddress) # 生成完整文件路径
 
-        with open(file_path, 'wb+') as destination: # 存到/static/input.后缀 文件下
+        file_path = 'static/input/class.jpg' # 生成完整文件路径
+
+        with open(file_path, 'wb+') as destination: # 班级照片，存在input目录下的class.JPG文件里
             for chunk in this_image.chunks():
                 destination.write(chunk)
 
@@ -104,15 +106,17 @@ class attendanceViewSet(viewsets.ModelViewSet):
             this_quantity = "high"
 
 
-        # 找出 output 文件的真正路径（本来后缀未知）
-        output_photo_name = ""
-        rootdir = os.path.join(BASE_DIR, "static")
-        print(rootdir)
-        list = os.listdir(rootdir)
-        for i in range(0, len(list)):
-            if re.match('^output*',list[i])!=None:
-                output_photo_name = list[i]
-                break
+        # # 找出 output 文件的真正路径（本来后缀未知）
+        # output_photo_name = ""
+        # rootdir = os.path.join(BASE_DIR, "static")
+        # print(rootdir)
+        # list = os.listdir(rootdir)
+        # for i in range(0, len(list)):
+        #     if re.match('^output*',list[i])!=None:
+        #         output_photo_name = list[i]
+        #         break
+
+
         # 返回json格式：
         # {
         #     quantity:"low"/"high"
@@ -126,7 +130,8 @@ class attendanceViewSet(viewsets.ModelViewSet):
         return Response({
             "quantity":this_quantity,
             "student_sign_list":student_sign_list,
-            "output_photo_src":'static/'+output_photo_name
+            "output_photo_src":'static/output/output.jpg'
+            #"output_photo_src":'static/output/'+output_photo_name   # 注意这里output的路径
         })
 
 
