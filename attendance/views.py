@@ -36,7 +36,7 @@ class attendanceViewSet(viewsets.ModelViewSet):
             return Response("Error") # 越权访问，返回error
 
         # 获取并存储图片
-        # this_image = request.FILES['file'] # UploadedFile 对象
+        this_image = request.FILES['file'] # UploadedFile 对象
         # filename = this_image.name # 上传的照片的文件名
         # enddress = filename.split('.')[-1] #文件名后缀
         # if enddress == "jpeg":
