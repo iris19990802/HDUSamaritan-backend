@@ -74,8 +74,9 @@ class attendanceViewSet(viewsets.ModelViewSet):
 
         # --------------  返回值还要调过  ---------------------
 
+        
+        print(response.text)
         result_type = response.json()['result']
-       
         # 接到返回值：“缺课学生学号”的列表
         student_abcense_lst = response.json()['miss']
         #student_abcense_lst = json.loads(response.text)
