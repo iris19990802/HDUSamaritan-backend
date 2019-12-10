@@ -64,7 +64,9 @@ class attendanceViewSet(viewsets.ModelViewSet):
 
         #response = requests.post('http://x.b1n.top:12350/query/',json=params)
 
+        
         response = requests.post('http://0.0.0.0:5002/query/',json=params,timeout=60) # 永远等待（避免反复请求）
+
 
         print("-------------- 请求算法端签到（query）-----------------")
         print("status_code")
@@ -72,13 +74,14 @@ class attendanceViewSet(viewsets.ModelViewSet):
         print("json")
         print(response.text)
 
-        # --------------  返回值还要调过  ---------------------
+        # ------------------  返回值还要调过  ---------------------
 
         
-        print(response.text)
-        return Response({
-            'text': response.text,
-        })
+        # print(response.text)
+        # return Response({
+        #     'text': response.text,
+        # })
+        
         result_type = response.json()['result']
         # 接到返回值：“缺课学生学号”的列表
         student_abcense_lst = response.json()['miss']
