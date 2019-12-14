@@ -59,12 +59,6 @@ class attendanceViewSet(viewsets.ModelViewSet):
         #post_params = json.dumps(params) # 不用转成字符串
 
         # 调用算法部分api (sign)
-        #response = requests.post('http://host.docker.internal:6000/uploader',json=params) # 指定post请求头：application/json
-        #response = requests.post('http://172.17.0.1:6000/uploader',json=params)
-
-        #response = requests.post('http://x.b1n.top:12350/query/',json=params)
-
-        
         response = requests.post('http://0.0.0.0:5002/query/',json=params,timeout=60) # 永远等待（避免反复请求）
 
 
@@ -76,11 +70,6 @@ class attendanceViewSet(viewsets.ModelViewSet):
 
         # ------------------  返回值还要调过  ---------------------
 
-        
-        # print(response.text)
-        # return Response({
-        #     'text': response.text,
-        # })
 
         result_type = json.loads(response.text.strip('\0'))['result']
         # 接到返回值：“缺课学生学号”的列表
@@ -112,16 +101,6 @@ class attendanceViewSet(viewsets.ModelViewSet):
         else:
             this_quantity = "high"
 
-
-        # # 找出 output 文件的真正路径（本来后缀未知）
-        # output_photo_name = ""
-        # rootdir = os.path.join(BASE_DIR, "static")
-        # print(rootdir)
-        # list = os.listdir(rootdir)
-        # for i in range(0, len(list)):
-        #     if re.match('^output*',list[i])!=None:
-        #         output_photo_name = list[i]
-        #         break
 
 
         # 返回json格式：
