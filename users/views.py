@@ -196,7 +196,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
             response = requests.get('http://0.0.0.0:5002/key/',json=params,timeout=60)  # 设置超时时间：永远等待（不要反复请求）
             
-            status = response.json()['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
+            status = json.loads(response.text.strip('\0'))['result'] # 0 成功 ； 1 照片文件不存在 ； 2 照片质量太差
 
             # 打出调试信息
             status_code = response.status_code
