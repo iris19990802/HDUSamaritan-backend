@@ -14,7 +14,7 @@ from users.models import User
 from course.models import Course,Registration
 
 from users.utils import load_image_file,exif_transpose
-
+import json
 import requests
 
 class UserViewSet(viewsets.ModelViewSet):
